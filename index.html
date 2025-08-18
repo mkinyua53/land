@@ -7,6 +7,9 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap');
 
+        [role="button"] {
+            cursor: pointer;
+        }
         body {
             margin: 0;
             padding: 0;
@@ -16,7 +19,65 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            background-image: url('./image1.jpg');
+            position: relative;
+            /* overflow: hidden; */
+            overflow-x: hidden;
+        }
+
+        .background-slideshow {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        .background-slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            opacity: 0;
+            transition: opacity 2s ease-in-out;
+            filter: blur(1px) brightness(0.7);
+        }
+
+        .background-slide.active {
+            opacity: 1;
+        }
+
+        .background-slide:nth-child(1) {
+            background: linear-gradient(135deg, rgba(46,139,87,0.3) 0%, rgba(34,139,34,0.5) 100%),
+                        url('./image1.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+
+        .background-slide:nth-child(2) {
+            background: linear-gradient(135deg, rgba(30,144,255,0.3) 0%, rgba(65,105,225,0.5) 100%),
+                        url('./image2.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+
+        .background-slide:nth-child(3) {
+            background: linear-gradient(135deg, rgba(255,140,0,0.3) 0%, rgba(255,165,0,0.5) 100%),
+                        url('./image3.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+
+        .background-slide:nth-child(4) {
+            background: linear-gradient(135deg, rgba(147,112,219,0.3) 0%, rgba(138,43,226,0.5) 100%),
+                        url('./image4.jpg');
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
@@ -25,13 +86,15 @@
         .poster {
             width: 8.5in;
             /* height: 11in; */
-            /* background: white; */
-            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            background: rgba(255, 255, 255, 0.015);
+            /* backdrop-filter: blur(10px); */
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
             border-radius: 15px;
-            overflow: hidden;
+            /* overflow: hidden; */
             position: relative;
             display: flex;
             flex-direction: column;
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
         .header {
@@ -40,7 +103,7 @@
             padding: 30px 40px;
             text-align: center;
             position: relative;
-            overflow: hidden;
+            /* overflow: hidden; */
         }
 
         .header::before {
@@ -195,7 +258,7 @@
         }
 
         .cta {
-            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
+            background: linear-gradient(135deg, #8a4242 0%, #ee5a52 100%);
             color: white;
             padding: 25px;
             border-radius: 15px;
@@ -266,6 +329,13 @@
     </style>
 </head>
 <body>
+    <div class="background-slideshow">
+        <div class="background-slide active"></div>
+        <div class="background-slide"></div>
+        <div class="background-slide"></div>
+        <div class="background-slide"></div>
+    </div>
+
     <div class="poster">
         <div class="header">
             <h1>🏡 PRIME PLOTS FOR SALE</h1>
@@ -278,7 +348,7 @@
                 <p style="margin: 10px 0 0; font-size: 1.1em; font-weight: 600; color: #2E8B57;">Per Plot</p>
             </div>
 
-            <div class="location">
+            <div class="location" onclick="openMap()" title="Click to open map" role="button" aria-roledescription="Opens map in new tab">
                 <h2>📍 PRIME LOCATION</h2>
                 <p><strong>Mathaithi</strong></p>
                 <p>Near Kingdom Seekers Church</p>
@@ -311,16 +381,18 @@
                 </div>
             </div>
 
-            <div class="cta">
+            <div class="cta" role="button" aria-roledescription="Opens contact form in new tab" title="Click to call">
                 <h2>📞 CONTACT US TODAY!</h2>
                 <p>Don't miss this incredible opportunity</p>
                 <div class="contact-info">
-                    <div class="contact-item">
+                    <div class="contact-item" onclick="openContact()" title="Click to call">
                         <span>📱</span>
                         <span>Call for Details</span>
                     </div>
-                    <div class="contact-item">
-                        <span>📅</span>
+                    <div class="contact-item" onclick="openWhatsapp()" title="Click to send message">
+                        <span>
+                            <img src="./whatsapp.png" alt="Whatsapp logo" width="20" height="20">
+                        </span>
                         <span>Book Viewing</span>
                     </div>
                 </div>
@@ -329,6 +401,20 @@
     </div>
 
     <script>
+        // Background slideshow functionality
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.background-slide');
+        const totalSlides = slides.length;
+
+        function nextSlide() {
+            slides[currentSlide].classList.remove('active');
+            currentSlide = (currentSlide + 1) % totalSlides;
+            slides[currentSlide].classList.add('active');
+        }
+
+        // Change background every 4 seconds
+        setInterval(nextSlide, 4000);
+
         // Add some interactive effects
         document.addEventListener('DOMContentLoaded', function() {
             const features = document.querySelectorAll('.feature');
@@ -353,6 +439,22 @@
             }
         `;
         document.head.appendChild(style);
+
+        function openMap() {
+            const address = 'Kingdom Seekers Church, Along Karatina - Nyeri Highway, Mathaithi'
+            const encodedAddress = encodeURIComponent(address)
+            const url = `https://www.google.com/maps/search/?api=1&query=${encodedAddress}`
+            window.open(url, '_blank')
+        }
+
+        function openContact() {
+            const url = 'tel:+254726214020'
+            window.open(url, '_blank')
+        }
+        function openWhatsapp() {
+            const url = 'https://api.whatsapp.com/send?phone=+254726214020&text=Hello%20there%20from%20Mathaithi%20Plots%20for%20Sale'
+            window.open(url, '_blank')
+        }
     </script>
 </body>
 </html>
